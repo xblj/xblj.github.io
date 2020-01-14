@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>redux 全解析（三） bindActionCreators | 前端学习笔记</title>
+    <meta name="description" content="用于记录前端学习记录">
+    
+    
+    <link rel="preload" href="/assets/css/0.styles.3e51a216.css" as="style"><link rel="preload" href="/assets/js/app.0c6b48fc.js" as="script"><link rel="preload" href="/assets/js/2.4d6503df.js" as="script"><link rel="preload" href="/assets/js/12.11b22214.js" as="script"><link rel="prefetch" href="/assets/js/10.d769e9e8.js"><link rel="prefetch" href="/assets/js/11.2569e6ee.js"><link rel="prefetch" href="/assets/js/13.13dfc642.js"><link rel="prefetch" href="/assets/js/14.13f3bc90.js"><link rel="prefetch" href="/assets/js/15.dadfe122.js"><link rel="prefetch" href="/assets/js/16.4b1d92a0.js"><link rel="prefetch" href="/assets/js/17.a1743846.js"><link rel="prefetch" href="/assets/js/18.cbf197c0.js"><link rel="prefetch" href="/assets/js/19.30d29e4d.js"><link rel="prefetch" href="/assets/js/20.90973a2e.js"><link rel="prefetch" href="/assets/js/3.cd4667e2.js"><link rel="prefetch" href="/assets/js/4.2810ddf2.js"><link rel="prefetch" href="/assets/js/5.be4c08d2.js"><link rel="prefetch" href="/assets/js/6.33213ff0.js"><link rel="prefetch" href="/assets/js/7.d4729253.js"><link rel="prefetch" href="/assets/js/8.e243b76b.js"><link rel="prefetch" href="/assets/js/9.7e871753.js">
+    <link rel="stylesheet" href="/assets/css/0.styles.3e51a216.css">
+  </head>
+  <body>
+    <div id="app" data-server-rendered="true"><div class="theme-container no-sidebar"><header class="navbar"><div class="sidebar-button"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" viewBox="0 0 448 512" class="icon"><path fill="currentColor" d="M436 124H12c-6.627 0-12-5.373-12-12V80c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12z"></path></svg></div> <a href="/" class="home-link router-link-active"><!----> <span class="site-name">前端学习笔记</span></a> <div class="links"><div class="search-box"><input aria-label="Search" autocomplete="off" spellcheck="false" value=""> <!----></div> <nav class="nav-links can-hide"><div class="nav-item"><div class="dropdown-wrapper"><button type="button" aria-label="webpack" class="dropdown-title"><span class="title">webpack</span> <span class="arrow right"></span></button> <ul class="nav-dropdown" style="display:none;"><li class="dropdown-item"><!----> <a href="/webpack/html-webpack-plugin.html" class="nav-link">html-webpack-plugin分析实现</a></li></ul></div></div><div class="nav-item"><div class="dropdown-wrapper"><button type="button" aria-label="react" class="dropdown-title"><span class="title">react</span> <span class="arrow right"></span></button> <ul class="nav-dropdown" style="display:none;"><li class="dropdown-item"><!----> <a href="/react/redux/" class="nav-link router-link-active">redux</a></li></ul></div></div> <!----></nav></div></header> <div class="sidebar-mask"></div> <aside class="sidebar"><nav class="nav-links"><div class="nav-item"><div class="dropdown-wrapper"><button type="button" aria-label="webpack" class="dropdown-title"><span class="title">webpack</span> <span class="arrow right"></span></button> <ul class="nav-dropdown" style="display:none;"><li class="dropdown-item"><!----> <a href="/webpack/html-webpack-plugin.html" class="nav-link">html-webpack-plugin分析实现</a></li></ul></div></div><div class="nav-item"><div class="dropdown-wrapper"><button type="button" aria-label="react" class="dropdown-title"><span class="title">react</span> <span class="arrow right"></span></button> <ul class="nav-dropdown" style="display:none;"><li class="dropdown-item"><!----> <a href="/react/redux/" class="nav-link router-link-active">redux</a></li></ul></div></div> <!----></nav>  <!----> </aside> <main class="page"> <div class="theme-default-content content__default"><h1 id="redux-全解析（三）-bindactioncreators"><a href="#redux-全解析（三）-bindactioncreators" class="header-anchor">#</a> redux 全解析（三） bindActionCreators</h1> <ul><li><p>有什么用？</p> <ol><li>快速创建<code>action</code></li> <li>简化数据提交</li></ol></li></ul> <p>一般我们在提交<code>action</code>时，并不会直接直接将一个对象传递给<code>dispatch</code>，而是调用一个函数生成<code>action</code>，再传递给<code>dispatch</code>。</p> <div class="language-js extra-class"><pre class="language-js"><code><span class="token comment">// bad, 这样书写有很多不好的地方</span>
+<span class="token comment">// 1. 重复书写，多个地方用到了，每个地方都需要写一个action</span>
+<span class="token comment">// 2. 不理解后期修改，比如需要将'INCREMENT'改为'INCREMENT_TWO'</span>
+<span class="token function">dispatch</span><span class="token punctuation">(</span><span class="token punctuation">{</span>
+  type<span class="token operator">:</span> <span class="token string">'INCREMENT'</span><span class="token punctuation">,</span>
+  payload<span class="token operator">:</span> <span class="token number">1</span><span class="token punctuation">,</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token function">dispatch</span><span class="token punctuation">(</span><span class="token punctuation">{</span>
+  type<span class="token operator">:</span> <span class="token string">'INCREMENT'</span><span class="token punctuation">,</span>
+  payload<span class="token operator">:</span> <span class="token number">1</span><span class="token punctuation">,</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment">// GOOD</span>
+<span class="token keyword">function</span> <span class="token function">increment</span><span class="token punctuation">(</span><span class="token parameter">payload</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token keyword">return</span> <span class="token punctuation">{</span>
+    type<span class="token operator">:</span> <span class="token string">'INCREMENT'</span><span class="token punctuation">,</span>
+    payload<span class="token punctuation">,</span>
+  <span class="token punctuation">}</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token function">dispatch</span><span class="token punctuation">(</span><span class="token function">increment</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token function">dispatch</span><span class="token punctuation">(</span><span class="token function">increment</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token function">dispatch</span><span class="token punctuation">(</span><span class="token function">increment</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+</code></pre></div><p>我们使用 actionCreator 来生成 action，bindActionCreators 可以让我进一步简化提交，使用如下：</p> <div class="language-js extra-class"><pre class="language-js"><code><span class="token keyword">import</span> React<span class="token punctuation">,</span> <span class="token punctuation">{</span> useState<span class="token punctuation">,</span> useEffect <span class="token punctuation">}</span> <span class="token keyword">from</span> <span class="token string">'react'</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token punctuation">{</span> bindActionCreators <span class="token punctuation">}</span> <span class="token keyword">from</span> <span class="token string">'source/react/redux'</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> store <span class="token keyword">from</span> <span class="token string">'./store'</span><span class="token punctuation">;</span>
+<span class="token comment">// 导入所有的creator</span>
+<span class="token keyword">import</span> <span class="token operator">*</span> <span class="token keyword">as</span> actionCreators <span class="token keyword">from</span> <span class="token string">'./store/createActions'</span><span class="token punctuation">;</span>
+<span class="token comment">// 绑定creator</span>
+<span class="token keyword">const</span> boundActionCreators <span class="token operator">=</span> <span class="token function">bindActionCreators</span><span class="token punctuation">(</span>actionCreators<span class="token punctuation">,</span> store<span class="token punctuation">.</span>dispatch<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token keyword">export</span> <span class="token keyword">default</span> <span class="token keyword">function</span> <span class="token function">App</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token keyword">const</span> <span class="token punctuation">[</span>state<span class="token punctuation">,</span> setState<span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token function">useState</span><span class="token punctuation">(</span>store<span class="token punctuation">.</span><span class="token function">getState</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+  <span class="token keyword">function</span> <span class="token function">increment</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token comment">// 提交数据不需要再写dispatch</span>
+    boundActionCreators<span class="token punctuation">.</span><span class="token function">increment</span><span class="token punctuation">(</span><span class="token number">2</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+
+  <span class="token keyword">function</span> <span class="token function">decrement</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token comment">// 提交数据不需要再写dispatch</span>
+    boundActionCreators<span class="token punctuation">.</span><span class="token function">decrement</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+
+  <span class="token function">useEffect</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+    <span class="token keyword">const</span> unsubscribe <span class="token operator">=</span> store<span class="token punctuation">.</span><span class="token function">subscribe</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+      <span class="token keyword">const</span> newState <span class="token operator">=</span> store<span class="token punctuation">.</span><span class="token function">getState</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token function">setState</span><span class="token punctuation">(</span>newState<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">return</span> unsubscribe<span class="token punctuation">;</span>
+  <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+  <span class="token keyword">return</span> <span class="token punctuation">(</span>
+    <span class="token operator">&lt;</span>div<span class="token operator">&gt;</span>
+      <span class="token operator">&lt;</span>div<span class="token operator">&gt;</span><span class="token punctuation">{</span>state<span class="token punctuation">.</span>count<span class="token punctuation">}</span><span class="token operator">&lt;</span><span class="token operator">/</span>div<span class="token operator">&gt;</span>
+      <span class="token operator">&lt;</span>button onClick<span class="token operator">=</span><span class="token punctuation">{</span>increment<span class="token punctuation">}</span><span class="token operator">&gt;</span><span class="token operator">+</span><span class="token operator">&lt;</span><span class="token operator">/</span>button<span class="token operator">&gt;</span>
+      <span class="token operator">&lt;</span>button onClick<span class="token operator">=</span><span class="token punctuation">{</span>decrement<span class="token punctuation">}</span><span class="token operator">&gt;</span><span class="token operator">-</span><span class="token operator">&lt;</span><span class="token operator">/</span>button<span class="token operator">&gt;</span>
+    <span class="token operator">&lt;</span><span class="token operator">/</span>div<span class="token operator">&gt;</span>
+  <span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+</code></pre></div><ul><li>实现</li></ul> <div class="language-js extra-class"><pre class="language-js"><code><span class="token keyword">const</span> <span class="token function-variable function">bindActionCreator</span> <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token parameter">actionCreator<span class="token punctuation">,</span> dispatch</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">(</span><span class="token parameter"><span class="token operator">...</span>args</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span>
+  <span class="token function">dispatch</span><span class="token punctuation">(</span><span class="token function">actionCreator</span><span class="token punctuation">(</span><span class="token operator">...</span>args<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment">/**
+ *
+ * @param {Function | {[key:string]:Function}} actionCreator
+ * @param {Function} dispatch
+ */</span>
+<span class="token keyword">export</span> <span class="token keyword">default</span> <span class="token keyword">function</span> <span class="token function">bindActionCreators</span><span class="token punctuation">(</span><span class="token parameter">actionCreator<span class="token punctuation">,</span> dispatch</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token keyword">const</span> creatorType <span class="token operator">=</span> <span class="token keyword">typeof</span> actionCreator<span class="token punctuation">;</span>
+  <span class="token keyword">if</span> <span class="token punctuation">(</span>creatorType <span class="token operator">===</span> <span class="token string">'function'</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">return</span> <span class="token function">bindActionCreator</span><span class="token punctuation">(</span>actionCreator<span class="token punctuation">,</span> dispatch<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+
+  <span class="token keyword">if</span> <span class="token punctuation">(</span>creatorType <span class="token operator">===</span> <span class="token string">'object'</span> <span class="token operator">&amp;&amp;</span> actionCreator <span class="token operator">!==</span> <span class="token keyword">null</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">return</span> Object<span class="token punctuation">.</span><span class="token function">keys</span><span class="token punctuation">(</span>actionCreator<span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">reduce</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token parameter">memo<span class="token punctuation">,</span> key</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+      memo<span class="token punctuation">[</span>key<span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token function">bindActionCreator</span><span class="token punctuation">(</span>actionCreator<span class="token punctuation">[</span>key<span class="token punctuation">]</span><span class="token punctuation">,</span> dispatch<span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token keyword">return</span> memo<span class="token punctuation">;</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span> <span class="token punctuation">{</span><span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre></div></div> <footer class="page-edit"><!----> <!----></footer> <!----> </main></div><div class="global-ui"></div></div>
+    <script src="/assets/js/app.0c6b48fc.js" defer></script><script src="/assets/js/2.4d6503df.js" defer></script><script src="/assets/js/12.11b22214.js" defer></script>
+  </body>
+</html>
