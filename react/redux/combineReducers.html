@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>redux 全解析（二） combineReducers | 前端学习笔记</title>
+    <meta name="description" content="用于记录前端学习记录">
+    
+    
+    <link rel="preload" href="/assets/css/0.styles.3e51a216.css" as="style"><link rel="preload" href="/assets/js/app.25ac483f.js" as="script"><link rel="preload" href="/assets/js/2.73b68451.js" as="script"><link rel="preload" href="/assets/js/13.6c6636fe.js" as="script"><link rel="prefetch" href="/assets/js/10.5e9ed7e3.js"><link rel="prefetch" href="/assets/js/11.994ceb72.js"><link rel="prefetch" href="/assets/js/12.96bd37f6.js"><link rel="prefetch" href="/assets/js/14.fb0ea9dd.js"><link rel="prefetch" href="/assets/js/15.f8a49931.js"><link rel="prefetch" href="/assets/js/16.cbfd77f2.js"><link rel="prefetch" href="/assets/js/17.123efd51.js"><link rel="prefetch" href="/assets/js/18.6b880ea9.js"><link rel="prefetch" href="/assets/js/19.30d29e4d.js"><link rel="prefetch" href="/assets/js/20.90973a2e.js"><link rel="prefetch" href="/assets/js/3.cd4667e2.js"><link rel="prefetch" href="/assets/js/4.2810ddf2.js"><link rel="prefetch" href="/assets/js/5.490baca1.js"><link rel="prefetch" href="/assets/js/6.5be6780c.js"><link rel="prefetch" href="/assets/js/7.d4729253.js"><link rel="prefetch" href="/assets/js/8.57710ac5.js"><link rel="prefetch" href="/assets/js/9.300b15a5.js">
+    <link rel="stylesheet" href="/assets/css/0.styles.3e51a216.css">
+  </head>
+  <body>
+    <div id="app" data-server-rendered="true"><div class="theme-container no-sidebar"><header class="navbar"><div class="sidebar-button"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" viewBox="0 0 448 512" class="icon"><path fill="currentColor" d="M436 124H12c-6.627 0-12-5.373-12-12V80c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12z"></path></svg></div> <a href="/" class="home-link router-link-active"><!----> <span class="site-name">前端学习笔记</span></a> <div class="links"><div class="search-box"><input aria-label="Search" autocomplete="off" spellcheck="false" value=""> <!----></div> <nav class="nav-links can-hide"><div class="nav-item"><div class="dropdown-wrapper"><button type="button" aria-label="webpack" class="dropdown-title"><span class="title">webpack</span> <span class="arrow right"></span></button> <ul class="nav-dropdown" style="display:none;"><li class="dropdown-item"><!----> <a href="/webpack/html-webpack-plugin.html" class="nav-link">html-webpack-plugin分析实现</a></li></ul></div></div><div class="nav-item"><div class="dropdown-wrapper"><button type="button" aria-label="react" class="dropdown-title"><span class="title">react</span> <span class="arrow right"></span></button> <ul class="nav-dropdown" style="display:none;"><li class="dropdown-item"><!----> <a href="/react/redux/" class="nav-link router-link-active">redux</a></li></ul></div></div> <!----></nav></div></header> <div class="sidebar-mask"></div> <aside class="sidebar"><nav class="nav-links"><div class="nav-item"><div class="dropdown-wrapper"><button type="button" aria-label="webpack" class="dropdown-title"><span class="title">webpack</span> <span class="arrow right"></span></button> <ul class="nav-dropdown" style="display:none;"><li class="dropdown-item"><!----> <a href="/webpack/html-webpack-plugin.html" class="nav-link">html-webpack-plugin分析实现</a></li></ul></div></div><div class="nav-item"><div class="dropdown-wrapper"><button type="button" aria-label="react" class="dropdown-title"><span class="title">react</span> <span class="arrow right"></span></button> <ul class="nav-dropdown" style="display:none;"><li class="dropdown-item"><!----> <a href="/react/redux/" class="nav-link router-link-active">redux</a></li></ul></div></div> <!----></nav>  <!----> </aside> <main class="page"> <div class="theme-default-content content__default"><h1 id="redux-全解析（二）-combinereducers"><a href="#redux-全解析（二）-combinereducers" class="header-anchor">#</a> redux 全解析（二） combineReducers</h1> <ul><li>有什么用？</li></ul> <ol><li><p>用于组合多个 <code>reducer</code></p></li> <li><p>通过实现的<a href="/react/redux/createStore">createStore</a>，我们知道，<code>createStore(reducer, state)</code>只能接受一个<code>reducer</code>，如果我们所有的逻辑都写在这一个<code>reducer</code>里面，一旦逻辑多了，那么必然难以维护。比如：</p></li></ol> <div class="language-js extra-class"><pre class="language-js"><code><span class="token comment">// 如果我们要实现两个计数器</span>
+<span class="token keyword">function</span> <span class="token function">reducer</span><span class="token punctuation">(</span><span class="token parameter">state<span class="token punctuation">,</span> action</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token keyword">switch</span> <span class="token punctuation">(</span>action<span class="token punctuation">.</span>type<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">case</span> <span class="token string">'increment1'</span><span class="token operator">:</span>
+      <span class="token keyword">return</span> <span class="token punctuation">{</span>
+        <span class="token operator">...</span>state<span class="token punctuation">,</span>
+        counter1<span class="token operator">:</span> <span class="token punctuation">{</span>
+          count<span class="token operator">:</span> state<span class="token punctuation">.</span>counter1<span class="token punctuation">.</span>count <span class="token operator">+</span> <span class="token number">1</span><span class="token punctuation">,</span>
+        <span class="token punctuation">}</span><span class="token punctuation">,</span>
+      <span class="token punctuation">}</span><span class="token punctuation">;</span>
+    <span class="token keyword">case</span> <span class="token string">'increment2'</span><span class="token operator">:</span>
+      <span class="token keyword">return</span> <span class="token punctuation">{</span>
+        <span class="token operator">...</span>state<span class="token punctuation">,</span>
+        counter2<span class="token operator">:</span> <span class="token punctuation">{</span>
+          count<span class="token operator">:</span> state<span class="token punctuation">.</span>counter2<span class="token punctuation">.</span>count <span class="token operator">+</span> <span class="token number">1</span><span class="token punctuation">,</span>
+        <span class="token punctuation">}</span><span class="token punctuation">,</span>
+      <span class="token punctuation">}</span><span class="token punctuation">;</span>
+    <span class="token keyword">case</span> <span class="token string">'decrement1'</span><span class="token operator">:</span>
+      <span class="token keyword">return</span> <span class="token punctuation">{</span>
+        <span class="token operator">...</span>state<span class="token punctuation">,</span>
+        counter1<span class="token operator">:</span> <span class="token punctuation">{</span>
+          count<span class="token operator">:</span> state<span class="token punctuation">.</span>counter1<span class="token punctuation">.</span>count <span class="token operator">-</span> <span class="token number">1</span><span class="token punctuation">,</span>
+        <span class="token punctuation">}</span><span class="token punctuation">,</span>
+      <span class="token punctuation">}</span><span class="token punctuation">;</span>
+    <span class="token keyword">case</span> <span class="token string">'decrement2'</span><span class="token operator">:</span>
+      <span class="token keyword">return</span> <span class="token punctuation">{</span>
+        <span class="token operator">...</span>state<span class="token punctuation">,</span>
+        counter2<span class="token operator">:</span> <span class="token punctuation">{</span>
+          count<span class="token operator">:</span> state<span class="token punctuation">.</span>counter2<span class="token punctuation">.</span>count <span class="token operator">-</span> <span class="token number">1</span><span class="token punctuation">,</span>
+        <span class="token punctuation">}</span><span class="token punctuation">,</span>
+      <span class="token punctuation">}</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre></div><p>为了解决上面提到的问题，我们需要拆分<code>reducer</code>到不同的文件，各个文件独立的管理自己的<code>state</code>，能达到如下的。</p> <blockquote><p>./store/counter1.js</p></blockquote> <div class="language-js extra-class"><pre class="language-js"><code><span class="token keyword">export</span> <span class="token keyword">default</span> <span class="token keyword">function</span> <span class="token function">counter</span><span class="token punctuation">(</span><span class="token parameter">state <span class="token operator">=</span> <span class="token punctuation">{</span> count<span class="token operator">:</span> <span class="token number">0</span> <span class="token punctuation">}</span><span class="token punctuation">,</span> action</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token keyword">switch</span> <span class="token punctuation">(</span>action<span class="token punctuation">.</span>type<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">case</span> <span class="token string">'INCREMENT1'</span><span class="token operator">:</span>
+      state<span class="token punctuation">.</span>count<span class="token operator">++</span><span class="token punctuation">;</span>
+      <span class="token keyword">break</span><span class="token punctuation">;</span>
+    <span class="token keyword">case</span> <span class="token string">'DECREMENT1'</span><span class="token operator">:</span>
+      state<span class="token punctuation">.</span>count<span class="token operator">--</span><span class="token punctuation">;</span>
+      <span class="token keyword">break</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+  <span class="token keyword">return</span> <span class="token punctuation">{</span> <span class="token operator">...</span>state <span class="token punctuation">}</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+</code></pre></div><blockquote><p>./store/counter2.js</p></blockquote> <div class="language-js extra-class"><pre class="language-js"><code><span class="token keyword">export</span> <span class="token keyword">default</span> <span class="token keyword">function</span> <span class="token function">counter</span><span class="token punctuation">(</span><span class="token parameter">state <span class="token operator">=</span> <span class="token punctuation">{</span> count<span class="token operator">:</span> <span class="token number">0</span> <span class="token punctuation">}</span><span class="token punctuation">,</span> action</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token keyword">switch</span> <span class="token punctuation">(</span>action<span class="token punctuation">.</span>type<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">case</span> <span class="token string">'INCREMENT2'</span><span class="token operator">:</span>
+      state<span class="token punctuation">.</span>count<span class="token operator">++</span><span class="token punctuation">;</span>
+      <span class="token keyword">break</span><span class="token punctuation">;</span>
+    <span class="token keyword">case</span> <span class="token string">'DECREMENT2'</span><span class="token operator">:</span>
+      state<span class="token punctuation">.</span>count<span class="token operator">--</span><span class="token punctuation">;</span>
+      <span class="token keyword">break</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+  <span class="token keyword">return</span> <span class="token punctuation">{</span> <span class="token operator">...</span>state <span class="token punctuation">}</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+</code></pre></div><blockquote><p>./store/reducer.js</p></blockquote> <div class="language-js extra-class"><pre class="language-js"><code><span class="token keyword">import</span> <span class="token punctuation">{</span> combineReducers <span class="token punctuation">}</span> <span class="token keyword">from</span> <span class="token string">'source/react/redux'</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> counter1 <span class="token keyword">from</span> <span class="token string">'./counter1'</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> counter2 <span class="token keyword">from</span> <span class="token string">'./counter2'</span><span class="token punctuation">;</span>
+
+<span class="token keyword">export</span> <span class="token keyword">default</span> <span class="token function">combineReducers</span><span class="token punctuation">(</span><span class="token punctuation">{</span>
+  counter1<span class="token punctuation">,</span>
+  counter2<span class="token punctuation">,</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+</code></pre></div><blockquote><p>./store/index.js</p></blockquote> <div class="language-js extra-class"><pre class="language-js"><code><span class="token keyword">import</span> <span class="token punctuation">{</span> createStore <span class="token punctuation">}</span> <span class="token keyword">from</span> <span class="token string">'source/react/redux'</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> reducer <span class="token keyword">from</span> <span class="token string">'./reducer'</span><span class="token punctuation">;</span>
+
+<span class="token keyword">const</span> store <span class="token operator">=</span> <span class="token function">createStore</span><span class="token punctuation">(</span>reducer<span class="token punctuation">)</span><span class="token punctuation">;</span>
+window<span class="token punctuation">.</span>store <span class="token operator">=</span> store<span class="token punctuation">;</span>
+
+<span class="token keyword">export</span> <span class="token keyword">default</span> store<span class="token punctuation">;</span>
+</code></pre></div><ul><li><p>实现</p> <div class="language-js extra-class"><pre class="language-js"><code><span class="token comment">/**
+ * 将多个reducer合并为一个reducer
+ */</span>
+<span class="token keyword">export</span> <span class="token keyword">default</span> <span class="token keyword">function</span> <span class="token function">combineReducers</span><span class="token punctuation">(</span><span class="token parameter">reducers</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token keyword">const</span> finalReducers <span class="token operator">=</span> <span class="token punctuation">{</span> <span class="token operator">...</span>reducers <span class="token punctuation">}</span><span class="token punctuation">;</span>
+
+  <span class="token keyword">return</span> <span class="token keyword">function</span> <span class="token function">combination</span><span class="token punctuation">(</span><span class="token parameter">state <span class="token operator">=</span> <span class="token punctuation">{</span><span class="token punctuation">}</span><span class="token punctuation">,</span> action</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token comment">// 下一次的状态</span>
+    <span class="token keyword">const</span> nextState <span class="token operator">=</span> <span class="token punctuation">{</span><span class="token punctuation">}</span><span class="token punctuation">;</span>
+    <span class="token comment">// 标记state是否有更改</span>
+    <span class="token keyword">let</span> hasChanged <span class="token operator">=</span> <span class="token boolean">false</span><span class="token punctuation">;</span>
+
+    <span class="token comment">// 遍历所有的reducer，以此执行</span>
+    Object<span class="token punctuation">.</span><span class="token function">keys</span><span class="token punctuation">(</span>finalReducers<span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">forEach</span><span class="token punctuation">(</span><span class="token parameter">key</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+      <span class="token keyword">const</span> reducer <span class="token operator">=</span> finalReducers<span class="token punctuation">[</span>key<span class="token punctuation">]</span><span class="token punctuation">;</span>
+      <span class="token keyword">const</span> previousStateForKey <span class="token operator">=</span> state<span class="token punctuation">[</span>key<span class="token punctuation">]</span><span class="token punctuation">;</span>
+      <span class="token keyword">const</span> nextStateForKey <span class="token operator">=</span> <span class="token function">reducer</span><span class="token punctuation">(</span>previousStateForKey<span class="token punctuation">,</span> action<span class="token punctuation">)</span><span class="token punctuation">;</span>
+      nextState<span class="token punctuation">[</span>key<span class="token punctuation">]</span> <span class="token operator">=</span> nextStateForKey<span class="token punctuation">;</span>
+      <span class="token comment">// 检测是否有更改，这里是一个浅比较，所以每次调用reducer有更改的时候都必须返回一个全新的对象，而不能只改动某一个属性</span>
+      hasChanged <span class="token operator">=</span> nextStateForKey <span class="token operator">!==</span> previousStateForKey<span class="token punctuation">;</span>
+    <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token comment">// 如果每个reducer返回没有更改过state，那么需要判断下，是否有新增reducer</span>
+    hasChanged <span class="token operator">=</span>
+      hasChanged <span class="token operator">||</span> finalReducers<span class="token punctuation">.</span>length <span class="token operator">!==</span> Object<span class="token punctuation">.</span><span class="token function">keys</span><span class="token punctuation">(</span>state<span class="token punctuation">)</span><span class="token punctuation">.</span>length<span class="token punctuation">;</span>
+
+    <span class="token comment">// 没有更改过任何值，直接返回老状态</span>
+    <span class="token keyword">return</span> hasChanged <span class="token operator">?</span> nextState <span class="token operator">:</span> state<span class="token punctuation">;</span>
+  <span class="token punctuation">}</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+</code></pre></div></li></ul></div> <footer class="page-edit"><!----> <!----></footer> <!----> </main></div><div class="global-ui"></div></div>
+    <script src="/assets/js/app.25ac483f.js" defer></script><script src="/assets/js/2.73b68451.js" defer></script><script src="/assets/js/13.6c6636fe.js" defer></script>
+  </body>
+</html>
