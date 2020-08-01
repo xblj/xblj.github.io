@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en-US">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>前端学习笔记</title>
+  <meta name="description" content="用于记录前端学习记录">
+  
+  
+  <link rel="preload" href="/assets/css/0.styles.3e51a216.css" as="style"><link rel="preload" href="/assets/js/app.87148e99.js" as="script"><link rel="preload" href="/assets/js/2.83eeaff2.js" as="script"><link rel="preload" href="/assets/js/13.26b43ff5.js" as="script"><link rel="prefetch" href="/assets/js/10.6f593b9b.js"><link rel="prefetch" href="/assets/js/11.f71b7c09.js"><link rel="prefetch" href="/assets/js/12.0496153c.js"><link rel="prefetch" href="/assets/js/14.d9e84a58.js"><link rel="prefetch" href="/assets/js/15.c3690bbc.js"><link rel="prefetch" href="/assets/js/16.6e5dac02.js"><link rel="prefetch" href="/assets/js/17.66f57a91.js"><link rel="prefetch" href="/assets/js/18.e0581af6.js"><link rel="prefetch" href="/assets/js/19.3bce7f52.js"><link rel="prefetch" href="/assets/js/20.a525c0e3.js"><link rel="prefetch" href="/assets/js/21.73cb61fb.js"><link rel="prefetch" href="/assets/js/22.257c9887.js"><link rel="prefetch" href="/assets/js/23.c09907e0.js"><link rel="prefetch" href="/assets/js/3.a86a3e22.js"><link rel="prefetch" href="/assets/js/4.28cbff14.js"><link rel="prefetch" href="/assets/js/5.55a60148.js"><link rel="prefetch" href="/assets/js/6.53bdd743.js"><link rel="prefetch" href="/assets/js/7.618a7261.js"><link rel="prefetch" href="/assets/js/8.62bd8d80.js"><link rel="prefetch" href="/assets/js/9.ed6fc6af.js">
+  <link rel="stylesheet" href="/assets/css/0.styles.3e51a216.css">
+  <style>
+
+    .root-container {
+      position: relative;
+      min-height: 95vh;
+      padding-bottom: 30px;
+      box-sizing: border-box;
+    }
+
+    .footer {
+      width: 100%;
+      position: absolute;
+      text-align: center;
+      font-size: 12px;
+      bottom: -30px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="root-container">
+      <div id="app" data-server-rendered="true"><div class="theme-container no-sidebar"><header class="navbar"><div class="sidebar-button"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" viewBox="0 0 448 512" class="icon"><path fill="currentColor" d="M436 124H12c-6.627 0-12-5.373-12-12V80c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12z"></path></svg></div> <a href="/" class="home-link router-link-active"><!----> <span class="site-name">前端学习笔记</span></a> <div class="links"><div class="search-box"><input aria-label="Search" autocomplete="off" spellcheck="false" value=""> <!----></div> <nav class="nav-links can-hide"><div class="nav-item"><div class="dropdown-wrapper"><button type="button" aria-label="webpack" class="dropdown-title"><span class="title">webpack</span> <span class="arrow right"></span></button> <ul class="nav-dropdown" style="display:none;"><li class="dropdown-item"><!----> <a href="/webpack/html-webpack-plugin.html" class="nav-link">html-webpack-plugin分析实现</a></li></ul></div></div><div class="nav-item"><div class="dropdown-wrapper"><button type="button" aria-label="react" class="dropdown-title"><span class="title">react</span> <span class="arrow right"></span></button> <ul class="nav-dropdown" style="display:none;"><li class="dropdown-item"><!----> <a href="/react/redux/" class="nav-link">redux</a></li></ul></div></div><div class="nav-item"><a href="/question/" class="nav-link router-link-exact-active router-link-active">每日一题</a></div><div class="nav-item"><a href="/other/" class="nav-link">杂记</a></div> <!----></nav></div></header> <div class="sidebar-mask"></div> <aside class="sidebar"><nav class="nav-links"><div class="nav-item"><div class="dropdown-wrapper"><button type="button" aria-label="webpack" class="dropdown-title"><span class="title">webpack</span> <span class="arrow right"></span></button> <ul class="nav-dropdown" style="display:none;"><li class="dropdown-item"><!----> <a href="/webpack/html-webpack-plugin.html" class="nav-link">html-webpack-plugin分析实现</a></li></ul></div></div><div class="nav-item"><div class="dropdown-wrapper"><button type="button" aria-label="react" class="dropdown-title"><span class="title">react</span> <span class="arrow right"></span></button> <ul class="nav-dropdown" style="display:none;"><li class="dropdown-item"><!----> <a href="/react/redux/" class="nav-link">redux</a></li></ul></div></div><div class="nav-item"><a href="/question/" class="nav-link router-link-exact-active router-link-active">每日一题</a></div><div class="nav-item"><a href="/other/" class="nav-link">杂记</a></div> <!----></nav>  <!----> </aside> <main class="page"> <div class="theme-default-content content__default"><ol><li><p>将数组扁平化并去除其中重复数据，最终得到一个升序且不重复的数组</p> <div class="language-js extra-class"><pre class="language-js"><code><span class="token keyword">const</span> <span class="token function-variable function">bindActionCreator</span> <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token parameter">actionCreator<span class="token punctuation">,</span> dispatch</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">(</span><span class="token parameter"><span class="token operator">...</span>args</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span>
+  <span class="token function">dispatch</span><span class="token punctuation">(</span><span class="token function">actionCreator</span><span class="token punctuation">(</span><span class="token operator">...</span>args<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment">/**
+ *
+ * @param {Function | {[key:string]:Function}} actionCreator
+ * @param {Function} dispatch
+ */</span>
+<span class="token keyword">export</span> <span class="token keyword">default</span> <span class="token keyword">function</span> <span class="token function">bindActionCreators</span><span class="token punctuation">(</span><span class="token parameter">actionCreator<span class="token punctuation">,</span> dispatch</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token keyword">const</span> creatorType <span class="token operator">=</span> <span class="token keyword">typeof</span> actionCreator<span class="token punctuation">;</span>
+  <span class="token keyword">if</span> <span class="token punctuation">(</span>creatorType <span class="token operator">===</span> <span class="token string">'function'</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">return</span> <span class="token function">bindActionCreator</span><span class="token punctuation">(</span>actionCreator<span class="token punctuation">,</span> dispatch<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+
+  <span class="token keyword">if</span> <span class="token punctuation">(</span>creatorType <span class="token operator">===</span> <span class="token string">'object'</span> <span class="token operator">&amp;&amp;</span> actionCreator <span class="token operator">!==</span> <span class="token keyword">null</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">return</span> Object<span class="token punctuation">.</span><span class="token function">keys</span><span class="token punctuation">(</span>actionCreator<span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">reduce</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token parameter">memo<span class="token punctuation">,</span> key</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+      memo<span class="token punctuation">[</span>key<span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token function">bindActionCreator</span><span class="token punctuation">(</span>actionCreator<span class="token punctuation">[</span>key<span class="token punctuation">]</span><span class="token punctuation">,</span> dispatch<span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token keyword">return</span> memo<span class="token punctuation">;</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span> <span class="token punctuation">{</span><span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre></div></li> <li><p>防抖函数，防止多次触发</p></li> <li><p>节流函数，在一定时间中只会触发一次</p></li></ol></div> <footer class="page-edit"><!----> <!----></footer> <!----> </main></div><div class="global-ui"></div></div>
+    <div class="footer">
+      <a href="http://www.beian.miit.gov.cn">蜀ICP备18034840号</a>
+    </div>
+  </div>
+  <script src="/assets/js/app.87148e99.js" defer></script><script src="/assets/js/2.83eeaff2.js" defer></script><script src="/assets/js/13.26b43ff5.js" defer></script>
+</body>
+
+</html>
